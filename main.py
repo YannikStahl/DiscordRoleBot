@@ -1,9 +1,11 @@
 import os, re, discord
+from dotenv import load_dotenv
 from discord.ext import commands
 from discord import app_commands
 
+load_dotenv()
 
-DISCORD_TOKEN = "MTExMzUwODEyNzQzNDg3OTAwNg.Gh_0tm.owyaW3Vhdb1Brl4kr_fHiBbtU9qx2Q5ggYWtwQ"
+DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 
 client = discord.Client(intents=discord.Intents.all())
 tree = app_commands.CommandTree(client)
