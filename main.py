@@ -48,7 +48,10 @@ async def schedule(interaction: discord.Interaction):
     members = role.members
     users = []
     for member in members:
-            users.append(member.name)
+      if member.nick:
+        users.append(member.nick)
+      else:
+        users.append(member.name)
     schedule_text += f"{r} - {', '.join(users)}\n"
   await interaction.response.send_message(schedule_text)
 
