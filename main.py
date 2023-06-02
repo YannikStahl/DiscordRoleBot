@@ -2,7 +2,8 @@ import os, re, discord
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord import app_commands
-import datetime
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 load_dotenv()
 
@@ -55,6 +56,26 @@ async def schedule(interaction: discord.Interaction):
     schedule_text += f"{r} - {', '.join(users)}\n"
   await interaction.response.send_message(schedule_text)
 
+
+@tree.command(name="convertlocaltime", description="Converts the time you enter from your timezone to UTC.")
+@app_commands.choices(hour=[
+    app_commands.Choice(name=str(hour)+"AM", value=hour) for hour in range(1,13) ] + [
+    app_commands.Choice(name=str(hour)+"PM", value=hour+12) for hour in range(1, 13)
+])
+async def convertlocaltime(interaction : discord.Interaction, hour: app_commands.Choice[int]):
+  timestamp = interaction.created_at
+  utc_time = datetime.now(ZoneInfo("UTC")).hour
+  print("UTC: " + str(utc_time))
+  local_time = timestamp.astimezone().hour
+  print("local: " + str(local_time))
+  time_difference = local_time - utc_time
+  converted_time = (hour.value - time_difference) % 24
+  is_pm = converted_time > 12
+  if is_pm:
+    converted_time -= 12
+    await interaction.response.send_message(f"The Time you entered converts to {converted_time} PM in UTC time.")
+  else:
+    await interaction.response.send_message(f"The Time you entered converts to {converted_time} AM in UTC time.")
 
 
 @client.event
